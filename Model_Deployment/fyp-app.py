@@ -239,3 +239,9 @@ if uploaded_file:
                     st.markdown("""
                         <meta http-equiv="refresh" content="0; url=." />
                     """, unsafe_allow_html=True)
+
+import os
+
+# Print current directory and files in the directory
+print("Current Working Directory:", os.getcwd())
+print("Files in Directory:", os.listdir(os.getcwd()))
