@@ -106,14 +106,13 @@ with st.sidebar:
 
     # Section 3: Cropping Tips
     st.subheader("✂️ Cropping Tips")
-    st.image(sample_image_path, caption="Sample Full Image", use_container_width=True)
-    st.image(sample_crop_path, caption="Ideal ROI Example", use_container_width=True)
+    st.image(sample_image_path, caption="Sample Full Image", use_column_width=True)
+    st.image(sample_crop_path, caption="Ideal ROI Example", use_column_width=True)
     st.markdown("""
     - Ensure the fabric is **well-lit** and **in focus**.
     - Avoid background clutter. Only the fabric should be in the box.
     - Try to box the texture details for better predictions.
     """)
-
 
     # Section 4: Common Issues
     st.subheader("❓ Common Issues")
@@ -202,7 +201,7 @@ if uploaded_file:
             st.image(
                 resized_display_image,
                 caption="Original Image",
-                use_container_width=True,  # Updated to use_container_width
+                use_column_width=False,
                 output_format="JPEG",
             )
         with padding_col:
@@ -211,7 +210,7 @@ if uploaded_file:
             st.image(
                 resized_display_cropped,
                 caption="Cropped ROI",
-                use_container_width=True,  # Updated to use_container_width
+                use_column_width=False,
                 output_format="JPEG",
             )
 
