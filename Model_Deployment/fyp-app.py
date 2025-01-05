@@ -98,10 +98,14 @@ with st.sidebar:
     5. **View Results**: The material and confidence levels will be displayed.
     """)
 
+# Construct full paths for the sample images
+sample_image_path = os.path.join(os.path.dirname(__file__), 'SampleImage.jpg')
+sample_crop_path = os.path.join(os.path.dirname(__file__), 'SampleROI.jpg')
+
     # Section 3: Cropping Tips
     st.subheader("✂️ Cropping Tips")
-    st.image('SampleImage.jpg', caption="Sample Full Image", use_column_width=True)
-    st.image('SampleROI.jpg', caption="Ideal ROI Example", use_column_width=True)
+    st.image(sample_image_path, caption="Sample Full Image", use_column_width=True)
+    st.image(sample_crop_path, caption="Ideal ROI Example", use_column_width=True)
     st.markdown("""
     - Ensure the fabric is **well-lit** and **in focus**.
     - Avoid background clutter. Only the fabric should be in the box.
