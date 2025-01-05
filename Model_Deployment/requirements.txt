@@ -1,8 +1,9 @@
 streamlit==1.15.0
 streamlit-drawable-canvas==0.9.3
-numpy
-pillow
-torch
-torchvision
-altair==4.2.2  # For Streamlit compatibility
+numpy==2.0.2
+Pillow==11.1.0
+torch==2.5.1
+torchvision==0.20.1
+altair==4.2.0
+pandas==2.2.3
 opencv-python-headless
