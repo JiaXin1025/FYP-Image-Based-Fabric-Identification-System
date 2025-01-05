@@ -144,22 +144,11 @@ st.subheader("Step 1: Upload Your Image")
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file:
-    try:
-        # Open and validate the uploaded image
-        image = Image.open(uploaded_file)
-        if image.mode != "RGB":
-            image = image.convert("RGB")  # Ensure image is in RGB format
-
-        # Fix aspect ratio and resizing for display
-        fixed_width = 600
-        aspect_ratio = image.height / image.width
-        resized_image = image.resize((fixed_width, int(fixed_width * aspect_ratio)))
-
-        # Save the resized image to session state
-        st.session_state["resized_image"] = resized_image
-    except Exception as e:
-        st.error(f"Error processing image: {e}")
-
+    image = Image.open(uploaded_file)
+    fixed_width = 600
+    aspect_ratio = image.height / image.width
+    resized_image = image.resize((fixed_width, int(fixed_width * aspect_ratio)))
+    st.session_state["resized_image"] = resized_image
 
     # Step 2: Draw ROI
     if st.session_state["show_canvas"]:
