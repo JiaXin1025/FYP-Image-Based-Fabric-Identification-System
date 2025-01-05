@@ -155,7 +155,7 @@ if uploaded_file:
         st.subheader("Step 2: Select Region of Interest (ROI)")
 
         # Load a sample image
-        background_image = Image.open("SampleImage.jpg").convert("RGBA")
+        background_image = Image.open(sample_image_path).convert("RGBA")
 
         # Render the canvas
         canvas_result = st_canvas(
