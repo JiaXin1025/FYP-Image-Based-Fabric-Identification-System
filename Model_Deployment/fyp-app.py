@@ -144,19 +144,29 @@ st.subheader("Step 1: Upload Your Image")
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file:
+    # Open the uploaded image
     image = Image.open(uploaded_file)
+
+    # Fix aspect ratio and resizing for display
     fixed_width = 600
     aspect_ratio = image.height / image.width
     resized_image = image.resize((fixed_width, int(fixed_width * aspect_ratio)))
+
+    # Save the resized image to session state
     st.session_state["resized_image"] = resized_image
+
+    # Convert PIL image to NumPy array for canvas compatibility
+    background_image = np.array(resized_image)
 
     # Step 2: Draw ROI
     if st.session_state["show_canvas"]:
         st.subheader("Step 2: Select Region of Interest (ROI)")
+
+        # Add canvas with background image
         canvas_result = st_canvas(
             fill_color="rgba(255, 165, 0, 0.3)",
             stroke_width=3,
-            background_image=ImageOps.exif_transpose(resized_image),
+            background_image=background_image,  # Use NumPy array
             update_streamlit=True,
             height=resized_image.height,
             width=fixed_width,
@@ -164,24 +174,26 @@ if uploaded_file:
             key="canvas",
         )
 
-        # Check for multiple boxes
+        # Check for canvas drawing data
         if canvas_result and canvas_result.json_data:
             if len(canvas_result.json_data["objects"]) > 1:
                 st.warning("Only one bounding box is allowed. Click 'Undo' to revert action.")
             elif len(canvas_result.json_data["objects"]) == 1:
                 confirm_button = st.button("Confirm Selection")
                 if confirm_button:
+                    # Extract ROI coordinates and crop
                     obj = canvas_result.json_data["objects"][0]
                     scale_factor = image.width / fixed_width
                     x, y, w, h = map(lambda v: int(v * scale_factor), [obj["left"], obj["top"], obj["width"], obj["height"]])
                     cropped_image = np.array(image)[y:y + h, x:x + w]
                     cropped_image = Image.fromarray(cropped_image)
 
-                    # Maintain padding and aspect ratio for cropped ROI display
+                    # Save cropped image with padding
                     cropped_image_padded = ImageOps.expand(cropped_image, border=(20, 20, 20, 20), fill="white")
                     st.session_state["cropped_image"] = cropped_image_padded
                     st.session_state["show_canvas"] = False
                     st.experimental_rerun()
+
 
     # Step 3: Prediction Results
     if st.session_state["cropped_image"]:
