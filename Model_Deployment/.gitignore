@@ -1,0 +1,56 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Python
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+
+# IDE files
+.vscode/
+.idea/
+
+# Build files
+dist/
+build/
+out/
+*.class
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*~
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.webp
+# Other
+*.zip
+*.tar.gz
