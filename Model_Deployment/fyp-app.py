@@ -83,7 +83,6 @@ if "show_canvas" not in st.session_state:
 st.title("Image-Based Clothing Material Identification System")
 
 # Sidebar: Help/Guide
-# Sidebar: Enhanced Help/Guide
 with st.sidebar:
     st.header("📖 Help & Guide")
     
@@ -129,21 +128,33 @@ with st.sidebar:
     """)
 
     # Section 6: Disclaimer
-    st.markdown('<div class="sidebar-subheader">⚠️ Disclaimer</div>', unsafe_allow_html=True)
+    st.subheader("⚠️ Disclaimer")
     st.markdown("""
-    <p class="sidebar-text">
-    This tool is developed for <span class="highlight">academic purposes</span> as part of a final year project. 
-    While the predictions are based on trained AI models, they may contain <span class="highlight">errors or inaccuracies</span>. 
+    This tool is developed for academic purposes as part of a final year project. 
+    While the predictions are based on trained AI models, they may contain errors or inaccuracies. 
     Users are advised not to rely solely on the results for critical decisions.
-    </p>
-    """,
-    unsafe_allow_html=True)
+    """)
+
 
 # Step 1: Upload Image
 st.subheader("Step 1: Upload Your Image")
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
 
 if uploaded_file:
+    # Detect if a new file is uploaded
+    if "last_uploaded_file" in st.session_state and st.session_state["last_uploaded_file"] != uploaded_file.name:
+        # Reset all session states related to the previous image
+        st.session_state["resized_image"] = None
+        st.session_state["cropped_image"] = None
+        st.session_state["prediction_done"] = False
+        st.session_state["prediction_results"] = None
+        st.session_state["prediction_probabilities"] = None
+        st.session_state["show_canvas"] = True
+
+    # Save the current file name to session state
+    st.session_state["last_uploaded_file"] = uploaded_file.name
+
+    # Process the uploaded file
     image = Image.open(uploaded_file)
     fixed_width = 600
     aspect_ratio = image.height / image.width
