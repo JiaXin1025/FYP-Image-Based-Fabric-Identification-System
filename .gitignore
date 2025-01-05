@@ -38,6 +38,9 @@ build/
 out/
 *.class
 
+Dataset/
+Original/
+
 # Temporary files
 *.tmp
 *.swp
