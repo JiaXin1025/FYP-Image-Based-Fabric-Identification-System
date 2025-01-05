@@ -154,22 +154,25 @@ if uploaded_file:
     if st.session_state["show_canvas"]:
         st.subheader("Step 2: Select Region of Interest (ROI)")
 
-        # Ensure resized_image is loaded
-        st.image(resized_image, caption="Debug: Resized Image for Canvas", use_column_width=True)
+        # Ensure resized_image is valid and in RGBA format
+        background_image = resized_image.convert("RGBA")
+        st.write(f"Type of background_image: {type(background_image)}")
+        st.write(f"Background image size: {background_image.size}")
 
+        # Render the canvas
         canvas_result = st_canvas(
-            fill_color="rgba(255, 165, 0, 0.3)",
+            fill_color="rgba(255, 165, 0, 0.3)",  # Transparent fill
             stroke_width=3,
-            background_image=resized_image,  # Directly use resized_image
+            background_image=background_image,  # Pass RGBA image
             update_streamlit=True,
-            height=resized_image.height,
-            width=resized_image.width,
+            height=background_image.height,  # Match canvas height to image
+            width=background_image.width,  # Match canvas width to image
             drawing_mode="rect",
             key="canvas",
         )
 
         # Log canvas result
-        st.write("Canvas result:", canvas_result)
+        st.write("Canvas result (debug):", canvas_result)
 
         # Check for multiple boxes
         if canvas_result and canvas_result.json_data:
