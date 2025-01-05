@@ -65,6 +65,7 @@ def predict_image(image):
 # Define labels for predictions
 labels = ["Cotton", "Silk", "Wool"]
 
+
 # Initialize session states
 if "prediction_done" not in st.session_state:
     st.session_state["prediction_done"] = False
@@ -135,7 +136,6 @@ with st.sidebar:
     Users are advised not to rely solely on the results for critical decisions.
     """)
 
-
 # Step 1: Upload Image
 st.subheader("Step 1: Upload Your Image")
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
@@ -156,7 +156,7 @@ if uploaded_file:
 
     # Process the uploaded file
     image = Image.open(uploaded_file)
-    fixed_width = 600
+    fixed_width = 400  # Reduced width for smaller display
     aspect_ratio = image.height / image.width
     resized_image = image.resize((fixed_width, int(fixed_width * aspect_ratio)))
     st.session_state["resized_image"] = resized_image
@@ -165,8 +165,9 @@ if uploaded_file:
     if st.session_state["show_canvas"]:
         st.subheader("Step 2: Select Region of Interest (ROI)")
         canvas_result = st_canvas(
-            fill_color="rgba(255, 165, 0, 0.3)",
+            fill_color="rgba(255, 0, 0, 0)",  # Red stroke
             stroke_width=3,
+            stroke_color="red",  # Set red color for border
             background_image=ImageOps.exif_transpose(resized_image),
             update_streamlit=True,
             height=resized_image.height,
@@ -181,6 +182,7 @@ if uploaded_file:
                 st.warning("Only one bounding box is allowed. Click 'Undo' to revert action.")
             elif len(canvas_result.json_data["objects"]) == 1:
                 confirm_button = st.button("Confirm Selection")
+
                 if confirm_button:
                     obj = canvas_result.json_data["objects"][0]
                     scale_factor = image.width / fixed_width
@@ -199,7 +201,7 @@ if uploaded_file:
         st.subheader("Step 3: Crop Results")
 
         # Set display height to match both images
-        display_height = 300  # Fixed height for both images
+        display_height = 250  # Reduced display height for a compact layout
         aspect_ratio_original = st.session_state["resized_image"].width / st.session_state["resized_image"].height
         resized_display_image = st.session_state["resized_image"].resize((int(display_height * aspect_ratio_original), display_height))
 
@@ -207,7 +209,7 @@ if uploaded_file:
         resized_display_cropped = st.session_state["cropped_image"].resize((int(display_height * aspect_ratio_cropped), display_height))
 
         # Add padding between columns
-        col1, padding_col, col2 = st.columns([1, 0.05, 1])  # Extra padding in the middle column
+        col1, col2 = st.columns(2)
         with col1:
             st.image(
                 resized_display_image,
@@ -215,8 +217,6 @@ if uploaded_file:
                 use_column_width=False,
                 output_format="JPEG",
             )
-        with padding_col:
-            st.markdown("")  # Empty padding column to create spacing
         with col2:
             st.image(
                 resized_display_cropped,
@@ -225,15 +225,22 @@ if uploaded_file:
                 output_format="JPEG",
             )
 
-
         # Buttons and Prediction
         if not st.session_state["prediction_done"]:
-            if st.button("Predict Now"):
-                predicted_label, probabilities = predict_image(st.session_state["cropped_image"])
-                st.session_state["prediction_results"] = labels[predicted_label]
-                st.session_state["prediction_probabilities"] = probabilities
-                st.session_state["prediction_done"] = True
-                st.experimental_rerun()
+            col1, col2, col3 = st.columns([1, 0.1, 1])  # Add a narrow padding column for better spacing
+            with col1:
+                if st.button("Predict Now"):
+                    predicted_label, probabilities = predict_image(st.session_state["cropped_image"])
+                    st.session_state["prediction_results"] = labels[predicted_label]
+                    st.session_state["prediction_probabilities"] = probabilities
+                    st.session_state["prediction_done"] = True
+                    st.experimental_rerun()
+            with col3:
+                if st.button("Recrop"):
+                    st.session_state["cropped_image"] = None
+                    st.session_state["show_canvas"] = True
+                    st.session_state["prediction_done"] = False
+                    st.experimental_rerun()
         else:
             # Display Prediction Results
             st.subheader("Prediction Results")
@@ -243,21 +250,82 @@ if uploaded_file:
                 reverse=True
             )
             for rank, (label, prob) in enumerate(ranked_predictions, start=1):
-                st.write(f"Rank {rank}: **{label}** with probability **{prob:.2%}**")
+                st.markdown(f"**Rank {rank}: {label} ({prob:.2%})**")
+                st.progress(prob)
 
-            # Recrop and Start Over Buttons
-            col1, col2 = st.columns(2)
+            # Fabric Info Section
+            st.subheader("Fabric Details")
+            material = st.session_state["prediction_results"]
+            fabric_info = {
+            "Cotton": {
+                "Care Tips": (
+                    "- Wash in cold or warm water.\n"
+                    "- Use a gentle cycle and mild detergent.\n"
+                    "- Air dry or tumble dry on low."
+                ),
+                "Visual Characteristics": (
+                    "- Soft and matte finish.\n"
+                    "- Lightweight and breathable.\n"
+                    "- Common in everyday clothing."
+                ),
+                "Sustainability Info": (
+                    "- Growing cotton uses a lot of water and chemicals.\n"
+                    "- Recycle or reuse cotton items to reduce waste.\n"
+                    "- Support eco-friendly brands or practices."
+                )
+            },
+            "Silk": {
+                "Care Tips": (
+                    "- Hand wash with gentle soap or use a delicate cycle.\n"
+                    "- Air dry flat; avoid direct sunlight."
+                ),
+                "Visual Characteristics": (
+                    "- Smooth, shiny, and elegant texture.\n"
+                    "- Lightweight and drapes beautifully.\n"
+                    "- Often used in formal wear."
+                ),
+                "Sustainability Info": (
+                    "- Traditional silk production harms silkworms.\n"
+                    "- Recycle or reuse silk items when possible.\n"
+                    "- Consider alternatives like plant-based or synthetic fibers."
+                )
+            },
+            "Wool": {
+                "Care Tips": (
+                    "- Wash with lukewarm water and wool-safe detergent.\n"
+                    "- Gently press out water; do not wring.\n"
+                    "- Lay flat to dry."
+                ),
+                "Visual Characteristics": (
+                    "- Thick, soft, and slightly fluffy.\n"
+                    "- Warm and insulating.\n"
+                    "- Common in winter clothing like sweaters and coats."
+                ),
+                "Sustainability Info": (
+                    "- Wool farming can impact the environment.\n"
+                    "- Extend product life with proper care.\n"
+                    "- Recycle or donate wool items to reduce waste."
+                )
+            }
+        }
+
+            if material in fabric_info:
+                st.markdown("##### Care Tips")
+                st.markdown(fabric_info[material]["Care Tips"])
+                st.markdown("##### Looks Like")
+                st.markdown(fabric_info[material]["Visual Characteristics"])
+                st.markdown("##### Sustainability Info")
+                st.markdown(fabric_info[material]["Sustainability Info"])
+
+            # After Prediction Buttons
+            col1, col2, col3 = st.columns([1, 0.1, 1])  # Add a narrow padding column for better spacing
             with col1:
+                if st.button("Start Over"):
+                    st.session_state.clear()
+                    st.markdown("""<meta http-equiv="refresh" content="0; url=." />""", unsafe_allow_html=True)
+            with col3:
                 if st.button("Recrop"):
                     st.session_state["cropped_image"] = None
                     st.session_state["show_canvas"] = True
                     st.session_state["prediction_done"] = False
-                    st.session_state["prediction_results"] = None
-                    st.session_state["prediction_probabilities"] = None
                     st.experimental_rerun()
-            with col2:
-                if st.button("Start Over"):
-                    st.session_state.clear()
-                    st.markdown("""
-                        <meta http-equiv="refresh" content="0; url=." />
-                    """, unsafe_allow_html=True)
