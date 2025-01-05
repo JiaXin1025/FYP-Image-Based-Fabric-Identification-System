@@ -36,7 +36,7 @@ data_transforms = transforms.Compose([
 model = models.densenet121(pretrained=False)
 num_classes = 3
 model.classifier = nn.Linear(model.classifier.in_features, num_classes)
-model.load_state_dict(torch.load(r'../best_contrast_densenet121_scratch.pth', map_location=torch.device('cpu')))
+model.load_state_dict(torch.load('best_contrast_densenet121_scratch.pth', map_location=torch.device('cpu')))
 model.eval()
 
 # Predict Material
