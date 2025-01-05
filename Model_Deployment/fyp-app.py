@@ -153,12 +153,10 @@ if uploaded_file:
     # Step 2: Draw ROI
     if st.session_state["show_canvas"]:
         st.subheader("Step 2: Select Region of Interest (ROI)")
-
-        background_image = resized_image.convert("RGBA")
         canvas_result = st_canvas(
             fill_color="rgba(255, 165, 0, 0.3)",
             stroke_width=3,
-            background_image=background_image,
+            background_image=ImageOps.exif_transpose(resized_image),
             update_streamlit=True,
             height=resized_image.height,
             width=fixed_width,
