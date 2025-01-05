@@ -38,8 +38,14 @@ model = models.densenet121(pretrained=False)
 num_classes = 3
 model.classifier = nn.Linear(model.classifier.in_features, num_classes)
 
-# Construct the full path
+# Construct the model full path
 file_path = os.path.join(os.path.dirname(__file__), 'best_contrast_densenet121_scratch.pth')
+
+# Construct full paths for the sample images
+sample_image_path = os.path.join(os.path.dirname(__file__), 'SampleImage.jpg')
+sample_crop_path = os.path.join(os.path.dirname(__file__), 'SampleROI.jpg')
+
+
 model.load_state_dict(torch.load(file_path, map_location=torch.device('cpu')))
 
 model.eval()
@@ -97,10 +103,6 @@ with st.sidebar:
     4. **Predict**: Click "Predict Now" to identify the material.
     5. **View Results**: The material and confidence levels will be displayed.
     """)
-
-# Construct full paths for the sample images
-sample_image_path = os.path.join(os.path.dirname(__file__), 'SampleImage.jpg')
-sample_crop_path = os.path.join(os.path.dirname(__file__), 'SampleROI.jpg')
 
     # Section 3: Cropping Tips
     st.subheader("✂️ Cropping Tips")
