@@ -155,18 +155,19 @@ if uploaded_file:
     # Save the resized image to session state
     st.session_state["resized_image"] = resized_image
 
-    # Convert PIL image to NumPy array for canvas compatibility
-    background_image = np.array(resized_image)
+    # Ensure the image is in RGB mode
+    if resized_image.mode != "RGB":
+        resized_image = resized_image.convert("RGB")
 
     # Step 2: Draw ROI
     if st.session_state["show_canvas"]:
         st.subheader("Step 2: Select Region of Interest (ROI)")
 
-        # Add canvas with background image
+        # Pass PIL image directly to background_image
         canvas_result = st_canvas(
             fill_color="rgba(255, 165, 0, 0.3)",
             stroke_width=3,
-            background_image=background_image,  # Use NumPy array
+            background_image=resized_image,  # Use PIL image here
             update_streamlit=True,
             height=resized_image.height,
             width=fixed_width,
@@ -174,7 +175,7 @@ if uploaded_file:
             key="canvas",
         )
 
-        # Check for canvas drawing data
+        # Check for multiple boxes
         if canvas_result and canvas_result.json_data:
             if len(canvas_result.json_data["objects"]) > 1:
                 st.warning("Only one bounding box is allowed. Click 'Undo' to revert action.")
