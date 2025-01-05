@@ -6,6 +6,7 @@ from torchvision import transforms, models
 import torch.nn as nn
 import torch
 import cv2
+import os
 
 # Function for CLAHE transformation
 def apply_clahe(pil_image):
@@ -36,7 +37,11 @@ data_transforms = transforms.Compose([
 model = models.densenet121(pretrained=False)
 num_classes = 3
 model.classifier = nn.Linear(model.classifier.in_features, num_classes)
-model.load_state_dict(torch.load('best_contrast_densenet121_scratch.pth', map_location=torch.device('cpu')))
+
+# Construct the full path
+file_path = os.path.join(os.path.dirname(__file__), 'best_contrast_densenet121_scratch.pth')
+model.load_state_dict(torch.load(file_path, map_location=torch.device('cpu')))
+
 model.eval()
 
 # Predict Material
@@ -239,9 +244,3 @@ if uploaded_file:
                     st.markdown("""
                         <meta http-equiv="refresh" content="0; url=." />
                     """, unsafe_allow_html=True)
-
-import os
-
-# Print current directory and files in the directory
-print("Current Working Directory:", os.getcwd())
-print("Files in Directory:", os.listdir(os.getcwd()))
