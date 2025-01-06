@@ -82,8 +82,10 @@ if "canvas_locked" not in st.session_state:
     st.session_state["canvas_locked"] = False
 if "cropped_image" not in st.session_state:
     st.session_state["cropped_image"] = None
-if "show_canvas" not in st.session_state:
+if "show_canvas" not in st.session_state:  # Ensure show_canvas is initialized
     st.session_state["show_canvas"] = True
+if "last_uploaded_file" not in st.session_state:  # Ensure last_uploaded_file is initialized
+    st.session_state["last_uploaded_file"] = None
 
 # Streamlit App
 st.title("Image-Based Clothing Material Identification System")
