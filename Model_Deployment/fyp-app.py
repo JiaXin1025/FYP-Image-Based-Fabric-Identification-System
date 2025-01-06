@@ -182,10 +182,12 @@ if uploaded_file:
             key="canvas",
         )
 
-        # Check for multiple boxes
+        # Check for ROI selection issues
         if canvas_result and canvas_result.json_data:
             if len(canvas_result.json_data["objects"]) > 1:
                 st.warning("Only one bounding box is allowed. Click 'Undo' to revert action.")
+            elif len(canvas_result.json_data["objects"]) == 0:
+                st.error("Please select an ROI before proceeding.")
             elif len(canvas_result.json_data["objects"]) == 1:
                 confirm_button = st.button("Confirm Selection")
                 if confirm_button:
@@ -205,6 +207,9 @@ if uploaded_file:
                     st.session_state["prediction_results"] = None
                     st.session_state["prediction_probabilities"] = None
                     st.experimental_rerun()
+        else:
+            st.error("Please select an ROI before proceeding.")  # If no objects are drawn
+
 
     # Step 3: Prediction Results
     if st.session_state["cropped_image"] and not st.session_state["show_canvas"]:
