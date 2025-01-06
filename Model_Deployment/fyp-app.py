@@ -263,8 +263,7 @@ if uploaded_file:
             for rank, (label, prob) in enumerate(ranked_predictions, start=1):
                 st.markdown(f"**Rank {rank}: {label} ({prob:.2%})**")
                 st.progress(prob)
-            
-
+    
             # Fabric Info Section
             st.subheader("Fabric Details")
             material = st.session_state["prediction_results"]
@@ -320,10 +319,6 @@ if uploaded_file:
                 )
             }
         }
-    
-            # Fabric Info Section
-            st.subheader("Fabric Details")
-            material = st.session_state["prediction_results"]
             if material in fabric_info:
                 st.markdown("##### Care Tips")
                 st.markdown(fabric_info[material]["Care Tips"])
