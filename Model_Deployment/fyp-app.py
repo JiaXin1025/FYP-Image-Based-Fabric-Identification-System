@@ -33,33 +33,38 @@ data_transforms = transforms.Compose([
     transforms.ToTensor(),
 ])
 
-# Load the model
-model = models.densenet121(pretrained=False)
-num_classes = 3
-model.classifier = nn.Linear(model.classifier.in_features, num_classes)
-
-# Construct the model full path
-file_path = os.path.join(os.path.dirname(__file__), 'best_contrast_densenet121_scratch.pth')
-
 # Construct full paths for the sample images
 sample_image_path = os.path.join(os.path.dirname(__file__), 'SampleImage.jpg')
 sample_crop_path = os.path.join(os.path.dirname(__file__), 'SampleROI.jpg')
 
+# Load the model (only executed once!)
+@st.cache(allow_output_mutation=True)  # Use allow_output_mutation to cache the model object
+def load_model():
+    # Load the pre-trained model
+    model = models.densenet121(pretrained=False)
+    num_classes = 3
+    model.classifier = nn.Linear(model.classifier.in_features, num_classes)
+    
+    # Load the state dictionary
+    file_path = os.path.join(os.path.dirname(__file__), 'best_contrast_densenet121_scratch.pth')
+    model.load_state_dict(torch.load(file_path, map_location=torch.device('cpu')))
+    
+    # Set model to evaluation mode
+    model.eval()
+    return model
 
-model.load_state_dict(torch.load(file_path, map_location=torch.device('cpu')))
+# Load the model once
+model = load_model()
 
-model.eval()
-
-# Predict Material
+# Perform a prediction (Example function)
 def predict_image(image):
-    # Apply CLAHE to the image before processing
+    # Apply image preprocessing (example)
     image = apply_clahe(image)
-    # Transform and prepare the image for the model
     image = data_transforms(image).unsqueeze(0)
     with torch.no_grad():
         outputs = model(image)
         probabilities = torch.nn.functional.softmax(outputs[0], dim=0)
-    _, predicted = torch.max(outputs, 1)
+        _, predicted = torch.max(outputs, 1)
     return predicted.item(), probabilities.tolist()
 
 # Define labels for predictions
@@ -318,14 +323,15 @@ if uploaded_file:
                 st.markdown(fabric_info[material]["Sustainability Info"])
 
             # After Prediction Buttons
-            col1, col2, col3 = st.columns([1, 0.1, 1])  # Add a narrow padding column for better spacing
+            col1, col2 = st.columns([1, 1])  # Adjust column ratios as needed
             with col1:
-                if st.button("Start Over"):
-                    st.session_state.clear()
-                    st.markdown("""<meta http-equiv="refresh" content="0; url=." />""", unsafe_allow_html=True)
-            with col3:
                 if st.button("Recrop"):
                     st.session_state["cropped_image"] = None
                     st.session_state["show_canvas"] = True
-                    st.session_state["prediction_done"] = False
                     st.experimental_rerun()
+            with col2:
+                if st.button("Start Over"):
+                    st.session_state.clear()
+                    st.markdown("""<meta http-equiv="refresh" content="0; url=." />""", unsafe_allow_html=True)
+
+
