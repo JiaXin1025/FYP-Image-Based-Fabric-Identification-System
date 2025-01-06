@@ -189,7 +189,6 @@ if uploaded_file:
                 st.warning("Only one bounding box is allowed. Click 'Undo' to revert action.")
             elif len(canvas_result.json_data["objects"]) == 1:
                 confirm_button = st.button("Confirm Selection")
-
                 if confirm_button:
                     obj = canvas_result.json_data["objects"][0]
                     scale_factor = image.width / fixed_width
@@ -201,13 +200,18 @@ if uploaded_file:
                     cropped_image_padded = ImageOps.expand(cropped_image, border=(20, 20, 20, 20), fill="white")
                     st.session_state["cropped_image"] = cropped_image_padded
                     st.session_state["show_canvas"] = False
+
+                    # Reset prediction states after recrop
+                    st.session_state["prediction_done"] = False
+                    st.session_state["prediction_results"] = None
+                    st.session_state["prediction_probabilities"] = None
                     st.experimental_rerun()
 
     # Step 3: Prediction Results
-    if st.session_state["cropped_image"]:
+    if st.session_state["cropped_image"] and not st.session_state["show_canvas"]:
         st.subheader("Step 3: Crop Results")
 
-        # Set display height to match both images
+        # Display images
         display_height = 250  # Reduced display height for a compact layout
         aspect_ratio_original = st.session_state["resized_image"].width / st.session_state["resized_image"].height
         resized_display_image = st.session_state["resized_image"].resize((int(display_height * aspect_ratio_original), display_height))
@@ -234,7 +238,7 @@ if uploaded_file:
 
         # Buttons and Prediction
         if not st.session_state["prediction_done"]:
-            col1, col2, col3 = st.columns([1, 0.1, 1])  # Add a narrow padding column for better spacing
+            col1, col2 = st.columns([1, 1])  # Adjust button spacing
             with col1:
                 if st.button("Predict Now"):
                     predicted_label, probabilities = predict_image(st.session_state["cropped_image"])
@@ -242,7 +246,7 @@ if uploaded_file:
                     st.session_state["prediction_probabilities"] = probabilities
                     st.session_state["prediction_done"] = True
                     st.experimental_rerun()
-            with col3:
+            with col2:
                 if st.button("Recrop"):
                     st.session_state["cropped_image"] = None
                     st.session_state["show_canvas"] = True
@@ -263,59 +267,6 @@ if uploaded_file:
             # Fabric Info Section
             st.subheader("Fabric Details")
             material = st.session_state["prediction_results"]
-            fabric_info = {
-            "Cotton": {
-                "Care Tips": (
-                    "- Wash in cold or warm water.\n"
-                    "- Use a gentle cycle and mild detergent.\n"
-                    "- Air dry or tumble dry on low."
-                ),
-                "Visual Characteristics": (
-                    "- Soft and matte finish.\n"
-                    "- Lightweight and breathable.\n"
-                    "- Common in everyday clothing."
-                ),
-                "Sustainability Info": (
-                    "- Growing cotton uses a lot of water and chemicals.\n"
-                    "- Recycle or reuse cotton items to reduce waste.\n"
-                    "- Support eco-friendly brands or practices."
-                )
-            },
-            "Silk": {
-                "Care Tips": (
-                    "- Hand wash with gentle soap or use a delicate cycle.\n"
-                    "- Air dry flat; avoid direct sunlight."
-                ),
-                "Visual Characteristics": (
-                    "- Smooth, shiny, and elegant texture.\n"
-                    "- Lightweight and drapes beautifully.\n"
-                    "- Often used in formal wear."
-                ),
-                "Sustainability Info": (
-                    "- Traditional silk production harms silkworms.\n"
-                    "- Recycle or reuse silk items when possible.\n"
-                    "- Consider alternatives like plant-based or synthetic fibers."
-                )
-            },
-            "Wool": {
-                "Care Tips": (
-                    "- Wash with lukewarm water and wool-safe detergent.\n"
-                    "- Gently press out water; do not wring.\n"
-                    "- Lay flat to dry."
-                ),
-                "Visual Characteristics": (
-                    "- Thick, soft, and slightly fluffy.\n"
-                    "- Warm and insulating.\n"
-                    "- Common in winter clothing like sweaters and coats."
-                ),
-                "Sustainability Info": (
-                    "- Wool farming can impact the environment.\n"
-                    "- Extend product life with proper care.\n"
-                    "- Recycle or donate wool items to reduce waste."
-                )
-            }
-        }
-
             if material in fabric_info:
                 st.markdown("##### Care Tips")
                 st.markdown(fabric_info[material]["Care Tips"])
@@ -330,10 +281,9 @@ if uploaded_file:
                 if st.button("Recrop"):
                     st.session_state["cropped_image"] = None
                     st.session_state["show_canvas"] = True
+                    st.session_state["prediction_done"] = False
                     st.experimental_rerun()
             with col2:
                 if st.button("Start Over"):
                     st.session_state.clear()
                     st.markdown("""<meta http-equiv="refresh" content="0; url=." />""", unsafe_allow_html=True)
-
-
