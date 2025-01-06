@@ -187,7 +187,7 @@ if uploaded_file:
             if len(canvas_result.json_data["objects"]) > 1:
                 st.warning("Only one bounding box is allowed. Click 'Undo' to revert action.")
             elif len(canvas_result.json_data["objects"]) == 0:
-                st.error("Please select an ROI before proceeding.")
+                st.error("Please select an ROI to proceed.")
             elif len(canvas_result.json_data["objects"]) == 1:
                 confirm_button = st.button("Confirm Selection")
                 if confirm_button:
