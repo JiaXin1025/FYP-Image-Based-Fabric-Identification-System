@@ -263,7 +263,64 @@ if uploaded_file:
             for rank, (label, prob) in enumerate(ranked_predictions, start=1):
                 st.markdown(f"**Rank {rank}: {label} ({prob:.2%})**")
                 st.progress(prob)
+            
 
+            # Fabric Info Section
+            st.subheader("Fabric Details")
+            material = st.session_state["prediction_results"]
+            fabric_info = {
+            "Cotton": {
+                "Care Tips": (
+                    "- Wash in cold or warm water.\n"
+                    "- Use a gentle cycle and mild detergent.\n"
+                    "- Air dry or tumble dry on low."
+                ),
+                "Visual Characteristics": (
+                    "- Soft and matte finish.\n"
+                    "- Lightweight and breathable.\n"
+                    "- Common in everyday clothing."
+                ),
+                "Sustainability Info": (
+                    "- Growing cotton uses a lot of water and chemicals.\n"
+                    "- Recycle or reuse cotton items to reduce waste.\n"
+                    "- Support eco-friendly brands or practices."
+                )
+            },
+            "Silk": {
+                "Care Tips": (
+                    "- Hand wash with gentle soap or use a delicate cycle.\n"
+                    "- Air dry flat; avoid direct sunlight."
+                ),
+                "Visual Characteristics": (
+                    "- Smooth, shiny, and elegant texture.\n"
+                    "- Lightweight and drapes beautifully.\n"
+                    "- Often used in formal wear."
+                ),
+                "Sustainability Info": (
+                    "- Traditional silk production harms silkworms.\n"
+                    "- Recycle or reuse silk items when possible.\n"
+                    "- Consider alternatives like plant-based or synthetic fibers."
+                )
+            },
+            "Wool": {
+                "Care Tips": (
+                    "- Wash with lukewarm water and wool-safe detergent.\n"
+                    "- Gently press out water; do not wring.\n"
+                    "- Lay flat to dry."
+                ),
+                "Visual Characteristics": (
+                    "- Thick, soft, and slightly fluffy.\n"
+                    "- Warm and insulating.\n"
+                    "- Common in winter clothing like sweaters and coats."
+                ),
+                "Sustainability Info": (
+                    "- Wool farming can impact the environment.\n"
+                    "- Extend product life with proper care.\n"
+                    "- Recycle or donate wool items to reduce waste."
+                )
+            }
+        }
+    
             # Fabric Info Section
             st.subheader("Fabric Details")
             material = st.session_state["prediction_results"]
