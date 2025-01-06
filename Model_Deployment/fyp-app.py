@@ -52,6 +52,7 @@ data_transforms = transforms.Compose([
 # Construct full paths for the sample images
 sample_image_path = os.path.join(os.path.dirname(__file__), 'SampleImage.jpg')
 sample_crop_path = os.path.join(os.path.dirname(__file__), 'SampleROI.jpg')
+model_path = os.path.join(os.path.dirname(__file__), 'best_contrast_densenet121_scratch.pth')
 
 # Load the model (only executed once!)
 @st.cache(allow_output_mutation=True)  # Use allow_output_mutation to cache the model object
@@ -62,8 +63,7 @@ def load_model():
     model.classifier = nn.Linear(model.classifier.in_features, num_classes)
     
     # Load the state dictionary
-    file_path = os.path.join(os.path.dirname(__file__), 'best_contrast_densenet121_scratch.pth')
-    model.load_state_dict(torch.load(file_path, map_location=torch.device('cpu')))
+    model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     
     # Set model to evaluation mode
     model.eval()
