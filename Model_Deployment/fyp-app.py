@@ -8,6 +8,22 @@ import torch
 import cv2
 import os
 
+# Initialize session states
+if "prediction_done" not in st.session_state:
+    st.session_state["prediction_done"] = False
+if "prediction_results" not in st.session_state:
+    st.session_state["prediction_results"] = None
+if "prediction_probabilities" not in st.session_state:
+    st.session_state["prediction_probabilities"] = None
+if "canvas_locked" not in st.session_state:
+    st.session_state["canvas_locked"] = False
+if "cropped_image" not in st.session_state:  # Ensure cropped_image is initialized
+    st.session_state["cropped_image"] = None
+if "show_canvas" not in st.session_state:  # Ensure show_canvas is initialized
+    st.session_state["show_canvas"] = True
+if "last_uploaded_file" not in st.session_state:  # Ensure last_uploaded_file is initialized
+    st.session_state["last_uploaded_file"] = None
+
 # Function for CLAHE transformation
 def apply_clahe(pil_image):
     # Convert PIL image to a NumPy array
@@ -69,23 +85,6 @@ def predict_image(image):
 
 # Define labels for predictions
 labels = ["Cotton", "Silk", "Wool"]
-
-
-# Initialize session states
-if "prediction_done" not in st.session_state:
-    st.session_state["prediction_done"] = False
-if "prediction_results" not in st.session_state:
-    st.session_state["prediction_results"] = None
-if "prediction_probabilities" not in st.session_state:
-    st.session_state["prediction_probabilities"] = None
-if "canvas_locked" not in st.session_state:
-    st.session_state["canvas_locked"] = False
-if "cropped_image" not in st.session_state:
-    st.session_state["cropped_image"] = None
-if "show_canvas" not in st.session_state:  # Ensure show_canvas is initialized
-    st.session_state["show_canvas"] = True
-if "last_uploaded_file" not in st.session_state:  # Ensure last_uploaded_file is initialized
-    st.session_state["last_uploaded_file"] = None
 
 # Streamlit App
 st.title("Image-Based Clothing Material Identification System")
