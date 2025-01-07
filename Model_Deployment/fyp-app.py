@@ -141,7 +141,7 @@ with st.sidebar:
     st.subheader("⚠️ Disclaimer")
     st.markdown("""
     This tool is developed for academic purposes as part of a final year project. 
-    While the predictions are based on trained AI models, they may contain errors or inaccuracies.
+    While the predictions are based on trained AI models, they may contain inaccuracies.
 
     **Supported Materials:** Cotton, Silk, Wool  
     *We are actively working to support more fabric types in future releases.*
