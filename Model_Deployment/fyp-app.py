@@ -98,6 +98,9 @@ with st.sidebar:
     st.markdown("""
     This tool helps identify the material of fabric using image processing and AI.
     Follow these steps to get accurate predictions.
+
+    **Supported Materials:** Cotton, Silk, Wool  
+    *Future updates will expand support to more materials.*
     """)
 
     # Section 2: Step-by-Step Instructions
@@ -138,13 +141,23 @@ with st.sidebar:
     st.subheader("⚠️ Disclaimer")
     st.markdown("""
     This tool is developed for academic purposes as part of a final year project. 
-    While the predictions are based on trained AI models, they may contain errors or inaccuracies. 
+    While the predictions are based on trained AI models, they may contain errors or inaccuracies.
+
+    **Supported Materials:** Cotton, Silk, Wool  
+    *We are actively working to support more fabric types in future releases.*
+
     Users are advised not to rely solely on the results for critical decisions.
     """)
 
+
 # Step 1: Upload Image
 st.subheader("Step 1: Upload Your Image")
+st.markdown("""
+**Supported Materials:** Cotton, Silk, Wool  
+*More materials will be supported in future versions.*
+""")
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
+
 
 if uploaded_file:
     # Detect if a new file is uploaded
@@ -211,7 +224,7 @@ if uploaded_file:
             st.error("Please select an ROI before proceeding.")  # If no objects are drawn
 
 
-    # Step 3: Prediction Results
+    # Step 3: Cropped Image
     if st.session_state["cropped_image"] and not st.session_state["show_canvas"]:
         st.subheader("Step 3: Crop Results")
 
@@ -259,6 +272,10 @@ if uploaded_file:
         else:
             # Display Prediction Results
             st.subheader("Prediction Results")
+            st.markdown("""
+            **Note:** This system currently supports Cotton, Silk, and Wool.  
+            Future updates aim to support additional fabric types.
+            """)
             ranked_predictions = sorted(
                 zip(labels, st.session_state["prediction_probabilities"]),
                 key=lambda x: x[1],
