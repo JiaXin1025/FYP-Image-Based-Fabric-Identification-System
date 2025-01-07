@@ -52,6 +52,7 @@ data_transforms = transforms.Compose([
 # Construct full paths for the sample images
 sample_image_path = os.path.join(os.path.dirname(__file__), 'SampleImage.jpg')
 sample_crop_path = os.path.join(os.path.dirname(__file__), 'SampleROI.jpg')
+sample_crop_path_2 = os.path.join(os.path.dirname(__file__), 'SampleROI2.jpg')
 model_path = os.path.join(os.path.dirname(__file__), 'best_contrast_densenet121_scratch.pth')
 
 # Load the model (only executed once!)
@@ -116,7 +117,9 @@ with st.sidebar:
     # Section 3: Cropping Tips
     st.subheader("✂️ Cropping Tips")
     st.image(sample_image_path, caption="Sample Full Image", use_column_width=True)
-    st.image(sample_crop_path, caption="Ideal ROI Example", use_column_width=True)
+    st.image(sample_crop_path, caption="Ideal ROI Example 1", use_column_width=True)
+    st.image(sample_crop_path_2, caption="Ideal ROI Example 2", use_column_width=True)
+
     st.markdown("""
     - Ensure the fabric is **well-lit** and **in focus**.
     - Avoid background clutter. Only the fabric should be in the box.
