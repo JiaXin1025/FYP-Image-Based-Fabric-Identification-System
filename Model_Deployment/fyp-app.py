@@ -53,7 +53,7 @@ data_transforms = transforms.Compose([
 sample_image_path = os.path.join(os.path.dirname(__file__), 'SampleImage.jpg')
 sample_crop_path = os.path.join(os.path.dirname(__file__), 'SampleROI.jpg')
 sample_crop_path_2 = os.path.join(os.path.dirname(__file__), 'SampleROI2.jpg')
-model_path = os.path.join(os.path.dirname(__file__), 'best_contrast_densenet121_scratch.pth')
+model_path = os.path.join(os.path.dirname(__file__), 'fine_tuned_densenet121.pth')
 
 # Load the model (only executed once!)
 @st.cache(allow_output_mutation=True)  # Use allow_output_mutation to cache the model object
